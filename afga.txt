@@ -1,0 +1,15 @@
+Hardware Specifications/Need to do
+1.Fix up the robot arm
+	-On the wrist servo please fix it. Find the proper scale.
+	- on the elbow servo please fix the self tapping screws
+2.Find sources of power(at least two) to power the arm
+	- breadboard
+	-
+	-double AA batteries
+3.3d print mounts(Sean and Silas I told you guys what to do here) 
+4.Give me the positions of each servo
+is 0 close or 180 open and vice versa
+5.wire up the robot and do the electronics
+-put the electronics in a place in where wire DO NOT get in the way of the arm when its moving
+(this includes wires by the way)
+6.Might request extra hardware specifications

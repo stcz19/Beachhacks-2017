@@ -32,6 +32,10 @@ var controller = new Leap.Controller();
 controller.on('frame',function(frame)
 {
   //Leap motion control loop
+  if(frame.hands.length > 0)
+  {
+    //if hands is detected
+  }
   if(frame.pointables.length > 1)
   {
     //get finger
@@ -41,7 +45,6 @@ controller.on('frame',function(frame)
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
     claw_pos=(fingerDistance/1.5)-min_claw_distance;
-    console.log(claw_pos);
   }
 });
 
@@ -59,7 +62,7 @@ board.on("ready", function() {
     base= new five.Servo(pin_base);
     wrist = new five.Servo(pin_wrist);
     base_arm = new five.Servo(pin_base_arm);
-    claw_pin = new five.Servo(claw_pin);
+    claw = new five.Servo(claw_pin);
     elbow= new five.Servo(elbow_pin);
     base.to(90);
     wrist.to(90);
@@ -70,6 +73,12 @@ board.on("ready", function() {
     //this is our f
     this.loop(30, function(){
     //here we weite to servos
+    if(claw_pos >=0 && claw_pos <=140){
+      claw_pin.to(claw_pos);
+    }
+    if(base_pos >=0 && base_pos <= 180){
+      base.to(base_pos);
+    }
   });
 });
 //create utlilty functions
@@ -79,4 +88,11 @@ function distance(x1,y1,z1,x2,y2,z2) {
 
 function square(x) {
   return x*x;
+}
+function getbasepostition(x)
+{
+  var norm_b=100*normalize;
+  x=1.5+2*x;
+  var angle= 90+Math.cos(x)*90;
+  return angle;
 }
