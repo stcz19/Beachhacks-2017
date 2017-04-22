@@ -45,6 +45,7 @@ controller.on('frame',function(frame)
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
     claw_pos=(fingerDistance/1.5)-min_claw_distance;
+    console.log(claw_pos);
   }
 });
 
@@ -56,7 +57,7 @@ controller.on('connect', function(frame) {
 
 controller.connect();
 
-board = new five.Board({port:"COM7"});
+board = new five.Board();
 board.on("ready", function() {
   //start servo initialization
     base= new five.Servo(pin_base);
@@ -67,14 +68,14 @@ board.on("ready", function() {
     base.to(90);
     wrist.to(90);
     base_arm.to(90);
-    claw_pin.to(90);
+    claw.to(90);
     elbow.to(90);
     //inner function
     //this is our f
     this.loop(30, function(){
     //here we weite to servos
     if(claw_pos >=0 && claw_pos <=140){
-      claw_pin.to(claw_pos);
+      claw.to(claw_pos);
     }
     if(base_pos >=0 && base_pos <= 180){
       base.to(base_pos);
