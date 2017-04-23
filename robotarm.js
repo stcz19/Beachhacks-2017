@@ -4,11 +4,11 @@ var Leap = require('leapjs');
 // global variables
 
 //variables for  pin initialization
-var pin_base = 0;
-var pin_wrist = 0;
-var pin_base_arm=0;
-var claw_pin = 0;
-var elbow_pin=0;
+var pin_base = 10;
+var pin_wrist = 5;
+var pin_base_arm=9;
+var claw_pin = 3;
+var elbow_pin=6;
 //variables for servo
 var base,wrist,base_arm,claw,elbow;
 
@@ -40,7 +40,6 @@ var handHistory=[ ];
 var finger_distance;
 var frames=[];
 var armAngles;
-var wristAngle;
 //Leap motion controller
 var controller = new Leap.Controller();
 //Leap motion control loop
@@ -59,7 +58,8 @@ controller.on('frame',function(frame)
     console.log("y:"+frame.hands[0].palmPosition[1]);
     console.log("z:"+frame.hands[0].palmPosition[2]);
     */
-    console.log("wrist radians:"+frame.hands[0].pitch());
+
+    //console.log("wrist radians:"+frame.hands[0].pitch());
     var smoothedInput = smoothInput(handposition);
     smoothingQueue(handposition);
     if(smoothedInput.y < MIN_Y){smoothedInput.y = MIN_Y};
@@ -69,22 +69,26 @@ controller.on('frame',function(frame)
 
     armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
+    //console.log("baseVal:"+base_pos);
+    wrist_pos = todegrees(frame.hands[0].pitch());
+    wrist_pos =five.Fn.map(wrist_pos,-90,90,0,180);
     base_arm_pos =armAngles.theta1;
-    wristAngle = todegrees(frame.hands[0].pitch());
-    wristAngle =five.Fn.map(wristAngle,-90,90,0,180);
     elbow_pos=armAngles.theta2;
-    console.log("wrist degrees:"+wristAngle);
+    //console.log("wrist degrees:"+wristAngle);
+    console.log("arm degrees:"+base_arm_pos);
+    console.log("elbow degrees:"+elbow_pos);
 
   }
   if(frame.pointables.length > 1)
   {
     //get finger
     var f1 = frame.pointables[0];
-    var f2= frame.pointables[1];
+    var f2 = frame.pointables[1];
     //tip position is return an array [0,1,2] to [x,y,z]
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
-    claw_pos=(fingerDistance/1.5)-min_claw_distance;
+    claw_pos=120-fingerDistance;
+    //console.log("clawVal:"+claw_pos);
   }
   //push current frame
   frames.push(frame);
@@ -111,16 +115,15 @@ board.on("ready", function() {
     elbow= new five.Servo(elbow_pin);
   //INITIAL POSITION OF ARM *TO FIX*
     base.to(90);
-    wrist.to(90);
-    base_arm.to(90);
-    claw.to(90);
-    elbow.to(90);
+    wrist.to(80);
+    base_arm.to(180);
+    claw.to(5);
+    elbow.to(40);
     //inner function
-    //this is our f
     this.loop(30, function(){
 
     //here we write values to servos
-    if(claw_pos >=20 && claw_pos <=140){
+    if(claw_pos >= 0 && claw_pos <=120){
       claw.to(claw_pos);
     }
     if(wrist_pos >= 30 && wrist_pos <= 180){
@@ -130,7 +133,7 @@ board.on("ready", function() {
       base.to(base_pos);
     }
     if(base_arm_pos >= 80 && base_arm_pos <= 180) {
-      base_arm.to(base_arm);
+      base_arm.to(base_arm_pos);
     }
     if(elbow_pos >= 45 && elbow_pos <= 180) {
       elbow.to(elbow_pos);
@@ -185,7 +188,7 @@ function square(x) {
 function getbasepostition(x,z)
 {
   var angle = Math.tan(x/z);
-  return 90 - todegrees(angle);
+  return todegrees(angle) + 90;
 }
 
 //uses leapmotion hand (palm) values to
