@@ -53,16 +53,13 @@ controller.on('frame',function(frame)
   if(frame.hands.length > 0)
   {
     //create a handposition variable
+    frame.hands[0].palmPosition[1] -= 0;
+    frame.hands[0].palmPosition[2] = 100 + (-1*frame.hands[0].palmPosition[2]);
     handposition = frame.hands[0].palmPosition;
     //0-x
     //1-y
     //2-z
-    frame.hands[0].palmPosition[1] -= 0;
-    frame.hands[0].palmPosition[2] = 100 + (-1*frame.hands[0].palmPosition[2]);
-    /*
     console.log("y:"+frame.hands[0].palmPosition[1]);
-    console.log("z:"+frame.hands[0].palmPosition[2]);
-    */
 
     //console.log("wrist radians:"+frame.hands[0].pitch());
     var smoothedInput = smoothInput(handposition);
@@ -72,10 +69,12 @@ controller.on('frame',function(frame)
     if(smoothedInput.z < MIN_Z){smoothedInput.z = MIN_Z};
     if(smoothedInput.z >MAX_Z){smoothedInput.z = MAX_Z};
 
-    armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
+
     wrist_pos = todegrees(frame.hands[0].pitch());
     wrist_pos =five.Fn.map(wrist_pos,-90,90,0,180);
+
+    armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_arm_pos =armAngles.theta1;
     elbow_pos=armAngles.theta2;
     //console.log("wrist degrees:"+wristAngle);
@@ -130,13 +129,13 @@ board.on("ready", function() {
     if(wrist_pos >= 30 && wrist_pos <= 180){
       wrist.to(wrist_pos);
     }
-    if(base_pos >= 0 && base_pos <= 180){
-      base.to(base_pos);
-    }
-    // if(!isNaN(base_arm_pos) && !isNaN (base_arm_pos)) {
-    //   base_arm.to(base_arm_pos);
-    //    elbow.to(elbow_pos);
-    //  }
+    // if(base_pos >= 0 && base_pos <= 180){
+    //   base.to(base_pos);
+    // }
+    if(!isNaN(base_arm_pos) && !isNaN(elbow_pos)) {
+      base_arm.to(base_arm_pos);
+       elbow.to(elbow_pos);
+     }
   });
 });
 
@@ -205,14 +204,13 @@ console.log("z: "+z);
 //  console.log("a: "+a);
   b = Math.acos((square(LENGTH1)+square(hyp)-square(LENGTH2))/(2*LENGTH1*hyp));
 //  console.log("b: "+b);
-  var theta1 = todegrees(a+b);
+  var theta1 = todegrees(a+b) + 90;
 
   // Get second angle
   c = Math.acos((square(LENGTH2)+square(LENGTH1)-square(hyp))/(2*LENGTH1*LENGTH2));
   var theta2 = 180 - todegrees(c);
-  // console.log("t1: %s\tt2: %s", theta1, theta2);
-  //console.log("theta1: "+theta1);
-  //console.log("theta2: "+theta2);
+  console.log("theta1: "+theta1);
+  console.log("theta2: "+theta2);
   return {
     theta1: theta1,
     theta2: theta2
