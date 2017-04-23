@@ -130,7 +130,7 @@ board.on("ready", function() {
       base.to(base_pos);
     }
     if(base_arm_pos >= 80 && base_arm_pos <= 180) {
-      base_arm_pos.to(base_arm);
+      base_arm.to(base_arm);
     }
     if(elbow_pos >= 45 && elbow_pos <= 180) {
       elbow.to(elbow_pos);
