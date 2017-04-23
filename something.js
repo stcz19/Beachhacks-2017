@@ -59,7 +59,7 @@ controller.on('frame',function(frame)
     console.log("y:"+frame.hands[0].palmPosition[1]);
     console.log("z:"+frame.hands[0].palmPosition[2]);
     */
-    console.log("wrist angle:"+frame.hands[0].pitch());
+    console.log("wrist radians:"+frame.hands[0].pitch());
     var smoothedInput = smoothInput(handposition);
     smoothingQueue(handposition);
     if(smoothedInput.y < MIN_Y){smoothedInput.y = MIN_Y};
@@ -71,8 +71,9 @@ controller.on('frame',function(frame)
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
     base_arm_pos =armAngles.theta1;
     wristAngle = todegrees(frame.hands[0].pitch());
-    wristAngle =five.Fn.map(wristAngle,90,-90,0,180);
+    wristAngle =five.Fn.map(wristAngle,-90,90,0,180);
     elbow_pos=armAngles.theta2;
+    console.log("wrist degrees:"+wristAngle);
 
 
   }
