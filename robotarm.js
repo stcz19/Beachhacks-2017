@@ -26,7 +26,7 @@ var LENGTH2 = 120;
 
 //create restrictions in leapspace for palmPosition;
 var MIN_Z=0;
-var MAX_Z =500;
+var MAX_Z =415;
 var MIN_Y=0;
 var MAX_Y =800;
 
@@ -36,7 +36,7 @@ var min_claw_distance=15.0;// Leap will not fully close
 
 //Leap variables
 var handposition;
-var handHistory=[ ];
+var handHistory=[];
 var finger_distance;
 var frames=[];
 var armAngles;
@@ -75,6 +75,8 @@ controller.on('frame',function(frame)
     base_arm_pos =armAngles.theta1;
     elbow_pos=armAngles.theta2;
     //console.log("wrist degrees:"+wristAngle);
+    console.log("arm degrees:"+base_arm_pos);
+    console.log("elbow degrees:"+elbow_pos);
 
   }
   if(frame.pointables.length > 1)
@@ -130,18 +132,11 @@ board.on("ready", function() {
     if(base_pos >= 0 && base_pos <= 180){
       base.to(base_pos);
     }
-    if(!isNaN(base_arm_pos) && !isNaN(elbow_pos)) {
-    //  base_arm_pos >= 80 && base_arm_pos <= 180) {
-        base_arm.to(base_arm_pos);
-        console.log("arm degrees:"+base_arm_pos);
-      }
-      /*
-      if(elbow_pos >= 45 && elbow_pos <= 180) {
-        elbow.to(elbow_pos);
-        console.log("elbow degrees:"+elbow_pos);
-      }
-      */
-    //}
+    //need to fix here
+    if(!isNaN(base_arm_pos) && !isNaN (base_arm_pos)) {
+      base_arm.to(base_arm_pos);
+      elbow.to(elbow_pos);
+    }
   });
 });
 
@@ -205,7 +200,7 @@ function getArmAngles(y,z) {
   var theta1 = todegrees(a + b);
 
   var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
-  var theta2 = 180 - todegrees(c);
+  var theta2 = 180-todegrees(c);
 
   return {
     theta1: theta1,
