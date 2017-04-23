@@ -25,7 +25,7 @@ var LENGTH1 = 120;
 var LENGTH2 = 120;
 
 //create restrictions in leapspace for palmPosition;
-var MIN_Z=5;
+var MIN_Z=6;
 var MAX_Z =2000;
 var MIN_Y=0;
 var MAX_Y =2000;
@@ -36,8 +36,8 @@ var c  = 0.0;
 var hyp = 0.0;
 
 var normalize = 3;
-var num_smoothingFrames = 10;
-var min_claw_distance=15.0;// Leap will not fully close
+var num_smoothingFrames = 15;
+var min_claw_distance=10.0;// Leap will not fully close
 
 //Leap variables
 var handposition;
@@ -53,8 +53,8 @@ controller.on('frame',function(frame)
   if(frame.hands.length > 0)
   {
     //create a handposition variable
-    frame.hands[0].palmPosition[1] -= 0;
-    frame.hands[0].palmPosition[2] = 100 + (-1*frame.hands[0].palmPosition[2]);
+    frame.hands[0].palmPosition[1] -= 150;
+    frame.hands[0].palmPosition[2] = 110 + (-1*frame.hands[0].palmPosition[2]);
     handposition = frame.hands[0].palmPosition;
     //0-x
     //1-y
@@ -87,7 +87,7 @@ controller.on('frame',function(frame)
     //tip position is return an array [0,1,2] to [x,y,z]
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
-    claw_pos=120-fingerDistance;
+    claw_pos=110-fingerDistance;
     //console.log("clawVal:"+claw_pos);
   }
   //push current frame
@@ -129,9 +129,9 @@ board.on("ready", function() {
     if(wrist_pos >= 30 && wrist_pos <= 180){
       wrist.to(wrist_pos);
     }
-    // if(base_pos >= 0 && base_pos <= 180){
-    //   base.to(base_pos);
-    // }
+     if(base_pos >= 0 && base_pos <= 180){
+       base.to(base_pos);
+    }
     if(!isNaN(base_arm_pos) && !isNaN(elbow_pos)) {
       base_arm.to(base_arm_pos);
        elbow.to(elbow_pos);
@@ -202,12 +202,26 @@ console.log("z: "+z);
   //console.log("hypo: "+hyp);
   a = Math.atan(y/z);
 //  console.log("a: "+a);
-  b = Math.acos((square(LENGTH1)+square(hyp)-square(LENGTH2))/(2*LENGTH1*hyp));
+  var unit = (square(LENGTH1)+square(hyp)-square(LENGTH2))/(2*LENGTH1*hyp);
+  if(unit > 1) {
+    unit = 1;
+  }
+  if(unit < -1) {
+    unit = -1;
+  }
+  b = Math.acos(unit);
 //  console.log("b: "+b);
   var theta1 = todegrees(a+b) + 90;
 
   // Get second angle
-  c = Math.acos((square(LENGTH2)+square(LENGTH1)-square(hyp))/(2*LENGTH1*LENGTH2));
+  var unit2 = (square(LENGTH2)+square(LENGTH1)-square(hyp))/(2*LENGTH1*LENGTH2);
+  if(unit2 > 1) {
+    unit2 = 1;
+  }
+  if(unit2 < -1) {
+    unit2 = -1;
+  }
+  c = Math.acos(unit2);
   var theta2 = 180 - todegrees(c);
   console.log("theta1: "+theta1);
   console.log("theta2: "+theta2);
