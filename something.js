@@ -118,16 +118,22 @@ board.on("ready", function() {
     //inner function
     //this is our f
     this.loop(30, function(){
-    //here we weite to servos
 
+    //here we write values to servos
     if(claw_pos >=20 && claw_pos <=140){
       claw.to(claw_pos);
     }
     if(wrist_pos >= 30 && wrist_pos <= 180){
       wrist.to(wrist_pos);
     }
-    if(base_pos >=0 && base_pos <= 180){
+    if(base_pos >= 0 && base_pos <= 180){
       base.to(base_pos);
+    }
+    if(base_arm_pos >= 80 && base_arm_pos <= 180) {
+      base_arm_pos.to(base_arm);
+    }
+    if(elbow_pos >= 45 && elbow_pos <= 180) {
+      elbow.to(elbow_pos);
     }
   });
 });
