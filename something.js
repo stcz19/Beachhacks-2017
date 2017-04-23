@@ -35,6 +35,7 @@ controller.on('frame',function(frame)
   if(frame.hands.length > 0)
   {
     //if hands is detected
+
   }
   if(frame.pointables.length > 1)
   {
@@ -90,10 +91,16 @@ function distance(x1,y1,z1,x2,y2,z2) {
 function square(x) {
   return x*x;
 }
+
 function getbasepostition(x)
 {
   var norm_b=100*normalize;
   x=1.5+2*x;
   var angle= 90+Math.cos(x)*90;
   return angle;
+}
+
+function calculateInverseKinematics(y,z) {
+
+
 }
