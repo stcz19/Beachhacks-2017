@@ -10,7 +10,7 @@ var pin_base_arm=0;
 var claw_pin = 0;
 var elbow_pin=0;
 //variables for servo
-var base, wrist,base_arm,claw,elbow;
+var base,wrist,base_arm,claw,elbow;
 
 //movement variables
 var base_pos=90;
@@ -21,22 +21,22 @@ var elbow_pos=90;
 //other variables to use
 
 
-//create restrictions in leapspace
-var MIN_Z=0;   //
+//create restrictions in leapspace for palmPosition;
+var MIN_Z=0;
 var MAX_Z =500;
-var MIN_Y=0;// is up
+var MIN_Y=0;
 var MAX_Y =800;
 
 
 
 var min_claw_distance=15.0;// Leap will not fully close
+
 //Leap variables
 var handposition;
 var handHistory=[ ];
 var finger_distance;
-var armAngles;
 var frames=[];
-
+var armAngles;
 //Leap motion controller
 var controller = new Leap.Controller();
 //Leap motion control loop
@@ -49,10 +49,23 @@ controller.on('frame',function(frame)
     //0-x
     //1-y
     //2-z
-    frame.hands[0].palmPosition[1] -= 150;
+    frame.hands[0].palmPosition[1] -= 0;
     frame.hands[0].palmPosition[2] = 200 + (-1*frame.hands[0].palmPosition[2]);
     console.log("y:"+frame.hands[0].palmPosition[1]);
     console.log("z:"+frame.hands[0].palmPosition[2]);
+    var smoothedInput = smoothInput(handposition);
+    smoothingQueue(handposition);
+    if(smoothedInput.y < MIN_Y){smoothedInput.y = MIN_Y};
+    if(smoothedInput.y >MAX_Y){smoothedInput.y = MAX_Y};
+    if(smoothedInput.z < MIN_Z){smoothedInput.z = MIN_Z};
+    if(smoothedInput.z >MAX_Z){smoothedInput.z = MAX_Z};
+
+    armAngles=calculateInverseKinematics(smoothedInput.y,smoothedInput.z);
+    base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
+    base_arm_pos =armAngles.theta1;
+    //start
+    elbow_pos=armAngles.theta2;
+
   }
   if(frame.pointables.length > 1)
   {
@@ -64,6 +77,8 @@ controller.on('frame',function(frame)
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
     claw_pos=(fingerDistance/1.5)-min_claw_distance;
   }
+  //push current frame
+  frames.push(frame);
 });
 
 //on Connection with leap motion
