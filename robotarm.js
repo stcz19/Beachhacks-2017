@@ -191,7 +191,7 @@ function square(x) {
 function getbasepostition(x,z)
 {
   var angle = Math.tan(x/z);
-  return todegrees(angle) + 90;
+  return 0.65 * (todegrees(angle) + 90);
 }
 
 //uses leapmotion hand (palm) values to
