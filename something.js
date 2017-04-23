@@ -70,11 +70,11 @@ controller.on('frame',function(frame)
     armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
     base_arm_pos =armAngles.theta1;
-    //start
+    wristAngle = todegrees(frame.hands[0].pitch());
+    wristAngle =five.Fn.map(wristAngle,90,-90,0,180);
     elbow_pos=armAngles.theta2;
 
-    wristAngle = todegrees(frame.hands[0].pitch());
-    console.log("Degrees: "+wristAngle);
+
   }
   if(frame.pointables.length > 1)
   {
@@ -122,6 +122,9 @@ board.on("ready", function() {
 
     if(claw_pos >=20 && claw_pos <=140){
       claw.to(claw_pos);
+    }
+    if(wrist_pos >= 30 && wrist_pos <= 180){
+      wrist.to(wrist_pos);
     }
     if(base_pos >=0 && base_pos <= 180){
       base.to(base_pos);
