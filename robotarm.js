@@ -3,12 +3,13 @@ var five = require("johnny-five");
 var Leap = require('leapjs');
 // global variables
 
-//variables for  pin initialization
+//variables for pin initialization
 var pin_base = 10;
 var pin_wrist = 5;
 var pin_base_arm=9;
 var claw_pin = 3;
 var elbow_pin=6;
+
 //variables for servo
 var base,wrist,base_arm,claw,elbow;
 
@@ -53,7 +54,7 @@ controller.on('frame',function(frame)
   if(frame.hands.length > 0)
   {
     //create a handposition variable
-    frame.hands[0].palmPosition[1] -= 150;
+    frame.hands[0].palmPosition[1] -= 200;
     frame.hands[0].palmPosition[2] = 110 + (-1*frame.hands[0].palmPosition[2]);
     handposition = frame.hands[0].palmPosition;
     //0-x
@@ -87,7 +88,8 @@ controller.on('frame',function(frame)
     //tip position is return an array [0,1,2] to [x,y,z]
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
-    claw_pos=110-fingerDistance;
+    claw_pos=140-fingerDistance;
+
     //console.log("clawVal:"+claw_pos);
   }
   //push current frame
@@ -197,7 +199,7 @@ function getbasepostition(x,z)
 //http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
 function getArmAngles(y,z) {
 //console.log("y: "+y);
-console.log("z: "+z);
+  console.log("z: "+z);
   hyp = Math.sqrt(square(y)+square(z));
   //console.log("hypo: "+hyp);
   a = Math.atan(y/z);
@@ -225,6 +227,7 @@ console.log("z: "+z);
   var theta2 = 180 - todegrees(c);
   console.log("theta1: "+theta1);
   console.log("theta2: "+theta2);
+
   return {
     theta1: theta1,
     theta2: theta2
