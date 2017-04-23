@@ -71,8 +71,9 @@ controller.on('connect', function(frame) {
   console.log("Leap Connected.");
   setTimeout(function(){
     var time= frames.length/2;
-  },200);
-  });//call an inner function evvery 200ms
+  } ,200);
+});//call an inner function evvery 200ms
+
 
 controller.connect();
 
@@ -124,10 +125,10 @@ function getbasepostition(x)
   return angle;
 }
 
-//uses leapfrog hand values to
+//uses leapmotion hand (arm) values to
 //calculate into servo joint angles
+//http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
 function calculateInverseKinematics(y,z) {
-
   var hypotenuse = Math.sqrt(square(y) + square(z));
   var a = Math.atan(y / z);
   var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
