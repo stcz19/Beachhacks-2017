@@ -44,7 +44,6 @@ controller.on('frame',function(frame)
 {
   if(frame.hands.length > 0)
   {
-<<<<<<< HEAD
     //create a handposition variable
     handposition = frame.hands[0].palmPosition;
     //0-x
@@ -54,7 +53,6 @@ controller.on('frame',function(frame)
     frame.hands[0].palmPosition[2] = 200 + (-1*frame.hands[0].palmPosition[2]);
     console.log("y:"+frame.hands[0].palmPosition[1]);
     console.log("z:"+frame.hands[0].palmPosition[2]);
->>>>>>> 4590620d30cd316a2336e53622e44508fbcd40f0
   }
   if(frame.pointables.length > 1)
   {
