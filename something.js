@@ -20,14 +20,15 @@ var claw_pos=0.00;
 var elbow_pos=90;
 //other variables to use
 
+// length of lower arm and upper arm, respectively
+var LENGTH1 = 160;
+var LENGTH2 = 160;
 
 //create restrictions in leapspace
 var MIN_Z=0;   //
 var MAX_Z =500;
 var MIN_Y=0;// is up
 var MAX_Y =800;
-
-
 
 var min_claw_distance=15.0;// Leap will not fully close
 //Leap variables
@@ -85,6 +86,7 @@ board.on("ready", function() {
     base_arm = new five.Servo(pin_base_arm);
     claw = new five.Servo(claw_pin);
     elbow= new five.Servo(elbow_pin);
+  //INITIAL POSITION OF ARM *TO FIX*
     base.to(90);
     wrist.to(90);
     base_arm.to(90);
@@ -104,6 +106,14 @@ board.on("ready", function() {
   });
 });
 
+// takes the average value of up to 10 frames to smooth out input
+function smoothInput(current) {
+  //stack empty? do nothing
+  if(handHistory.length === 0) {
+    return current;
+  }
+
+}
 //create utlilty functions
 function distance(x1,y1,z1,x2,y2,z2) {
   return Math.sqrt(square(x2-x1)+square(y2-y1)+square(z2-z1));
@@ -119,16 +129,16 @@ function square(x) {
 
 function getbasepostition(x)
 {
-  var norm_b=100*normalize;
-  x=1.5+2*x;
-  var angle= 90+Math.cos(x)*90;
+  var norm_b = 100 * normalize;
+  x = 1.5 + 2 * x;
+  var angle = 90 + Math.cos(x) * 90;
   return angle;
 }
 
-//uses leapmotion hand (arm) values to
+//uses leapmotion hand (palm) values to
 //calculate into servo joint angles
 //http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
-function calculateInverseKinematics(y,z) {
+function getArmAngles(y,z) {
   var hypotenuse = Math.sqrt(square(y) + square(z));
   var a = Math.atan(y / z);
   var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
