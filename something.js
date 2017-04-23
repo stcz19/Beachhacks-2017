@@ -30,6 +30,7 @@ var MAX_Z =500;
 var MIN_Y=0;
 var MAX_Y =800;
 
+var normalize = 3;
 var num_smoothingFrames = 10;
 var min_claw_distance=15.0;// Leap will not fully close
 
@@ -62,7 +63,7 @@ controller.on('frame',function(frame)
     if(smoothedInput.z < MIN_Z){smoothedInput.z = MIN_Z};
     if(smoothedInput.z >MAX_Z){smoothedInput.z = MAX_Z};
 
-    armAngles=calculateInverseKinematics(smoothedInput.y,smoothedInput.z);
+    armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
     base_arm_pos =armAngles.theta1;
     //start
@@ -166,12 +167,10 @@ function square(x) {
   return x*x;
 }
 
-function getbasepostition(x)
+function getbasepostition(x,z)
 {
-  var norm_b = 100 * normalize;
-  x = 1.5 + 2 * x;
-  var angle = 90 + Math.cos(x) * 90;
-  return angle;
+  var angle = Math.tan(x/z);
+  return 90 - toDegrees(angle);
 }
 
 //uses leapmotion hand (palm) values to
