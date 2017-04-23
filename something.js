@@ -30,6 +30,7 @@ var MAX_Z =500;
 var MIN_Y=0;
 var MAX_Y =800;
 
+var num_smoothingFrames = 10;
 var min_claw_distance=15.0;// Leap will not fully close
 
 //Leap variables
@@ -128,6 +129,29 @@ function smoothInput(current) {
     return current;
   }
 
+  var x = 0;
+  var y = 0;
+  var z = 0;
+  var totalFrames = handHistory.length;
+
+  //add up all of the stored frames in the queue
+  for(var i = 0; i < totalFrames; i++) {
+    x += current[0] + handHistory[i][0];
+    y += current[1] + handHistory[i][1];
+    z += current[2] + handHistory[i][2];
+  }
+  totalFrames += 1;
+
+  //return the averages of the xyz values
+  return {x: x/totalFrames, y: y/totalFrames, z: z/totalFrames};
+}
+
+//pushes hand frames to a queue to be used by smoothInput()
+function smoothingQueue(current) {
+  handHistory.unshift(current);
+  if(handHistory.length > num_smoothingFrames) {
+    handHistory.pop();
+  }
 }
 //create utlilty functions
 function distance(x1,y1,z1,x2,y2,z2) {
