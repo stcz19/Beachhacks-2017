@@ -52,7 +52,7 @@ controller.on('frame',function(frame)
     //0-x
     //1-y
     //2-z
-    frame.hands[0].palmPosition[1] -= 0;
+    frame.hands[0].palmPosition[1] -= 150;
     frame.hands[0].palmPosition[2] = 200 + (-1*frame.hands[0].palmPosition[2]);
     /*
     console.log("y:"+frame.hands[0].palmPosition[1]);
@@ -75,9 +75,6 @@ controller.on('frame',function(frame)
     base_arm_pos =armAngles.theta1;
     elbow_pos=armAngles.theta2;
     //console.log("wrist degrees:"+wristAngle);
-    console.log("arm degrees:"+base_arm_pos);
-    console.log("elbow degrees:"+elbow_pos);
-
   }
   if(frame.pointables.length > 1)
   {
@@ -118,7 +115,7 @@ board.on("ready", function() {
     wrist.to(80);
     base_arm.to(180);
     claw.to(5);
-    elbow.to(60);
+    elbow.to(80);
     //inner function
     this.loop(30, function(){
 
@@ -133,10 +130,10 @@ board.on("ready", function() {
       base.to(base_pos);
     }
     //need to fix here
-    if(!isNaN(base_arm_pos) && !isNaN (base_arm_pos)) {
-      base_arm.to(base_arm_pos);
-      elbow.to(elbow_pos);
-    }
+    // if(!isNaN(base_arm_pos) && !isNaN (base_arm_pos)) {
+    //   base_arm.to(base_arm_pos);
+    //   elbow.to(elbow_pos);
+    // }
   });
 });
 
@@ -194,6 +191,9 @@ function getbasepostition(x,z)
 //calculate into servo joint angles
 //http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
 function getArmAngles(y,z) {
+  console.log("y:"+y);
+  console.log("z:"+z);
+
   var hypotenuse = Math.sqrt(square(y) + square(z));
   var a = Math.atan(y / z);
   var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
@@ -201,6 +201,8 @@ function getArmAngles(y,z) {
 
   var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
   var theta2 = 180-todegrees(c);
+  console.log("arm degrees:"+theta1);
+  console.log("elbow degrees:"+theta2);
 
   return {
     theta1: theta1,
