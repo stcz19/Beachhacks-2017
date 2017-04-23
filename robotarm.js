@@ -203,6 +203,8 @@ function getArmAngles(y,z) {
   var c = Math.acos((square(LENGTH2)+square(LENGTH1)-square(hypotenuse))/(2*LENGTH1*LENGTH2));
   var theta2 = 180 - toDegrees(c);
   // console.log("t1: %s\tt2: %s", theta1, theta2);
+  console.log("theta1"+theta1);
+  console.log("theta2"+theta2);
   return {
     theta1: theta1,
     theta2: theta2
