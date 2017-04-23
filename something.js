@@ -83,6 +83,7 @@ board.on("ready", function() {
     }
   });
 });
+
 //create utlilty functions
 function distance(x1,y1,z1,x2,y2,z2) {
   return Math.sqrt(square(x2-x1)+square(y2-y1)+square(z2-z1));
@@ -100,7 +101,20 @@ function getbasepostition(x)
   return angle;
 }
 
+//uses leapfrog hand values to
+//calculate into servo joint angles
 function calculateInverseKinematics(y,z) {
 
+  var hypotenuse = Math.sqrt(square(y) + square(z));
+  var a = Math.atan(y / z);
+  var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
+  var theta1 = todegrees(a + b);
 
+  var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
+  var theta2 = todegrees(c);
+
+  return {
+    theta1: theta1,
+    theta2: theta2
+  }
 }
