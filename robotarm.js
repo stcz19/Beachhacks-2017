@@ -21,8 +21,8 @@ var elbow_pos=90;
 //other variables to use
 
 // length of lower arm and upper arm, respectively
-var LENGTH1 = 160;
-var LENGTH2 = 160;
+var LENGTH1 = 120;
+var LENGTH2 = 120;
 
 //create restrictions in leapspace for palmPosition;
 var MIN_Z=0;
@@ -116,7 +116,7 @@ board.on("ready", function() {
     wrist.to(80);
     base_arm.to(180);
     claw.to(5);
-    elbow.to(40);
+    elbow.to(60);
     //inner function
     this.loop(30, function(){
 
@@ -131,15 +131,17 @@ board.on("ready", function() {
       base.to(base_pos);
     }
     if(!isNaN(base_arm_pos) && !isNaN(elbow_pos)) {
-      if(base_arm_pos >= 80 && base_arm_pos <= 180) {
+    //  base_arm_pos >= 80 && base_arm_pos <= 180) {
         base_arm.to(base_arm_pos);
         console.log("arm degrees:"+base_arm_pos);
       }
+      /*
       if(elbow_pos >= 45 && elbow_pos <= 180) {
         elbow.to(elbow_pos);
         console.log("elbow degrees:"+elbow_pos);
       }
-    }
+      */
+    //}
   });
 });
 
