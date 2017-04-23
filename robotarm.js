@@ -75,8 +75,6 @@ controller.on('frame',function(frame)
     base_arm_pos =armAngles.theta1;
     elbow_pos=armAngles.theta2;
     //console.log("wrist degrees:"+wristAngle);
-    console.log("arm degrees:"+base_arm_pos);
-    console.log("elbow degrees:"+elbow_pos);
 
   }
   if(frame.pointables.length > 1)
@@ -132,11 +130,15 @@ board.on("ready", function() {
     if(base_pos >= 0 && base_pos <= 180){
       base.to(base_pos);
     }
-    if(base_arm_pos >= 80 && base_arm_pos <= 180) {
-      base_arm.to(base_arm_pos);
-    }
-    if(elbow_pos >= 45 && elbow_pos <= 180) {
-      elbow.to(elbow_pos);
+    if(!isNaN(base_arm_pos) && !isNaN(elbow_pos)) {
+      if(base_arm_pos >= 80 && base_arm_pos <= 180) {
+        base_arm.to(base_arm_pos);
+        console.log("arm degrees:"+base_arm_pos);
+      }
+      if(elbow_pos >= 45 && elbow_pos <= 180) {
+        elbow.to(elbow_pos);
+        console.log("elbow degrees:"+elbow_pos);
+      }
     }
   });
 });
@@ -201,7 +203,7 @@ function getArmAngles(y,z) {
   var theta1 = todegrees(a + b);
 
   var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
-  var theta2 = todegrees(c);
+  var theta2 = 180 - todegrees(c);
 
   return {
     theta1: theta1,
