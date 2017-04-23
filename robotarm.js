@@ -25,10 +25,15 @@ var LENGTH1 = 120;
 var LENGTH2 = 120;
 
 //create restrictions in leapspace for palmPosition;
-var MIN_Z=0;
-var MAX_Z =415;
+var MIN_Z=5;
+var MAX_Z =2000;
 var MIN_Y=0;
-var MAX_Y =800;
+var MAX_Y =2000;
+
+var a  = 0.0;
+var b  = 0.0;
+var c  = 0.0;
+var hyp = 0.0;
 
 var normalize = 3;
 var num_smoothingFrames = 10;
@@ -52,8 +57,8 @@ controller.on('frame',function(frame)
     //0-x
     //1-y
     //2-z
-    frame.hands[0].palmPosition[1] -= 150;
-    frame.hands[0].palmPosition[2] = 200 + (-1*frame.hands[0].palmPosition[2]);
+    frame.hands[0].palmPosition[1] -= 0;
+    frame.hands[0].palmPosition[2] = 100 + (-1*frame.hands[0].palmPosition[2]);
     /*
     console.log("y:"+frame.hands[0].palmPosition[1]);
     console.log("z:"+frame.hands[0].palmPosition[2]);
@@ -69,7 +74,6 @@ controller.on('frame',function(frame)
 
     armAngles=getArmAngles(smoothedInput.y,smoothedInput.z);
     base_pos = getbasepostition(smoothedInput.x,smoothedInput.z);
-    //console.log("baseVal:"+base_pos);
     wrist_pos = todegrees(frame.hands[0].pitch());
     wrist_pos =five.Fn.map(wrist_pos,-90,90,0,180);
     base_arm_pos =armAngles.theta1;
@@ -111,11 +115,11 @@ board.on("ready", function() {
     claw = new five.Servo(claw_pin);
     elbow= new five.Servo(elbow_pin);
   //INITIAL POSITION OF ARM *TO FIX*
+    claw.to(90);
+    wrist.to(90);
     base.to(90);
-    wrist.to(80);
-    base_arm.to(180);
-    claw.to(5);
-    elbow.to(80);
+    base_arm.to(170);
+    elbow.to(90);
     //inner function
     this.loop(30, function(){
 
@@ -129,11 +133,10 @@ board.on("ready", function() {
     if(base_pos >= 0 && base_pos <= 180){
       base.to(base_pos);
     }
-    //need to fix here
     // if(!isNaN(base_arm_pos) && !isNaN (base_arm_pos)) {
     //   base_arm.to(base_arm_pos);
-    //   elbow.to(elbow_pos);
-    // }
+    //    elbow.to(elbow_pos);
+    //  }
   });
 });
 
@@ -150,10 +153,13 @@ function smoothInput(current) {
   var totalFrames = handHistory.length;
 
   //add up all of the stored frames in the queue
+  x += current[0];
+  y += current[1];
+  z += current[2];
   for(var i = 0; i < totalFrames; i++) {
-    x += current[0] + handHistory[i][0];
-    y += current[1] + handHistory[i][1];
-    z += current[2] + handHistory[i][2];
+    x += handHistory[i][0];
+    y += handHistory[i][1];
+    z += handHistory[i][2];
   }
   totalFrames += 1;
 
@@ -191,19 +197,22 @@ function getbasepostition(x,z)
 //calculate into servo joint angles
 //http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
 function getArmAngles(y,z) {
-  console.log("y:"+y);
-  console.log("z:"+z);
+//console.log("y: "+y);
+console.log("z: "+z);
+  hyp = Math.sqrt(square(y)+square(z));
+  //console.log("hypo: "+hyp);
+  a = Math.atan(y/z);
+//  console.log("a: "+a);
+  b = Math.acos((square(LENGTH1)+square(hyp)-square(LENGTH2))/(2*LENGTH1*hyp));
+//  console.log("b: "+b);
+  var theta1 = todegrees(a+b);
 
-  var hypotenuse = Math.sqrt(square(y) + square(z));
-  var a = Math.atan(y / z);
-  var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
-  var theta1 = todegrees(a + b);
-
-  var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
-  var theta2 = 180-todegrees(c);
-  console.log("arm degrees:"+theta1);
-  console.log("elbow degrees:"+theta2);
-
+  // Get second angle
+  c = Math.acos((square(LENGTH2)+square(LENGTH1)-square(hyp))/(2*LENGTH1*LENGTH2));
+  var theta2 = 180 - todegrees(c);
+  // console.log("t1: %s\tt2: %s", theta1, theta2);
+  //console.log("theta1: "+theta1);
+  //console.log("theta2: "+theta2);
   return {
     theta1: theta1,
     theta2: theta2
