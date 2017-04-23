@@ -26,7 +26,7 @@ var LENGTH2 = 160;
 
 //create restrictions in leapspace for palmPosition;
 var MIN_Z=0;
-var MAX_Z =415;
+var MAX_Z =2000;
 var MIN_Y=0;
 var MAX_Y =800;
 
@@ -194,14 +194,15 @@ function getbasepostition(x,z)
 //calculate into servo joint angles
 //http://cnx.org/contents/BDDH_rPS@12/Protein-Inverse-Kinematics-and
 function getArmAngles(y,z) {
-  var hypotenuse = Math.sqrt(square(y) + square(z));
-  var a = Math.atan(y / z);
-  var b = Math.acos((square(LENGTH1) + square(hypotenuse) - square(LENGTH2)) / (2 * LENGTH1 * hypotenuse));
-  var theta1 = todegrees(a + b);
+  var hypotenuse = Math.sqrt(square(y)+square(z));
+  var a = Math.atan(y/z);
+  var b = Math.acos((square(LENGTH1)+square(hypotenuse)-square(LENGTH2))/(2*LENGTH1*hypotenuse));
+  var theta1 = toDegrees(a+b);
 
-  var c = Math.acos((square(LENGTH1) + square(LENGTH2) - square(hypotenuse)) / (2 * LENGTH1 * LENGTH2));
-  var theta2 = 180-todegrees(c);
-
+  // Get second angle
+  var c = Math.acos((square(LENGTH2)+square(LENGTH1)-square(hypotenuse))/(2*LENGTH1*LENGTH2));
+  var theta2 = 180 - toDegrees(c);
+  // console.log("t1: %s\tt2: %s", theta1, theta2);
   return {
     theta1: theta1,
     theta2: theta2
