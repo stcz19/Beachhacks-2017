@@ -3,39 +3,58 @@ var five = require("johnny-five");
 var Leap = require('leapjs');
 // global variables
 
-//variablee for  pin initialization
+//variables for  pin initialization
 var pin_base = 0;
 var pin_wrist = 0;
 var pin_base_arm=0;
 var claw_pin = 0;
 var elbow_pin=0;
-
 //variables for servo
-var base;
-var wrist;
-var base_arm;
-var claw;
-var elbow;
+var base, wrist,base_arm,claw,elbow;
 
+//movement variables
 var base_pos=90;
 var base_arm_pos=90;
 var wrist_pos=90;
 var claw_pos=0.00;
 var elbow_pos=90;
-
 //other variables to use
+
+
+//create restrictions in leapspace
+var MIN_Z=0;   //
+var MAX_Z =500;
+var MIN_Y=0;// is up
+var MAX_Y =800;
+
+
+
 var min_claw_distance=15.0;// Leap will not fully close
+//Leap variables
+var handposition;
+var handHistory=[ ];
 var finger_distance;
+var armAngles;
+var frames=[];
+
 //Leap motion controller
 var controller = new Leap.Controller();
-
+//Leap motion control loop
 controller.on('frame',function(frame)
 {
-  //Leap motion control loop
   if(frame.hands.length > 0)
   {
-    //if hands is detected
-
+<<<<<<< HEAD
+    //create a handposition variable
+    handposition = frame.hands[0].palmPosition;
+    //0-x
+    //1-y
+    //2-z
+    frame.hands[0].palmPosition[1] -= 150;
+    frame.hands[0].palmPosition[2] = 200 + (-1*frame.hands[0].palmPosition[2]);
+    console.log("y:"+frame.hands[0].palmPosition[1]);
+    console.log("z:"+frame.hands[0].palmPosition[2]);
+>>>>>>> 4590620d30cd316a2336e53622e44508fbcd40f0
   }
   if(frame.pointables.length > 1)
   {
@@ -46,15 +65,16 @@ controller.on('frame',function(frame)
     fingerDistance = distance(f1.tipPosition[0],f1.tipPosition[1],f1.tipPosition[2],
       f2.tipPosition[0],f2.tipPosition[1],f2.tipPosition[2]); //this might switch to 180-distance or just distance;
     claw_pos=(fingerDistance/1.5)-min_claw_distance;
-    console.log(claw_pos);
   }
 });
 
 //on Connection with leap motion
 controller.on('connect', function(frame) {
   console.log("Leap Connected.");
-
-});
+  setTimeout(function(){
+    var time= frames.length/2;
+  },200);
+  });//call an inner function evvery 200ms
 
 controller.connect();
 
@@ -75,7 +95,8 @@ board.on("ready", function() {
     //this is our f
     this.loop(30, function(){
     //here we weite to servos
-    if(claw_pos >=0 && claw_pos <=140){
+
+    if(claw_pos >=20 && claw_pos <=140){
       claw.to(claw_pos);
     }
     if(base_pos >=0 && base_pos <= 180){
@@ -87,6 +108,10 @@ board.on("ready", function() {
 //create utlilty functions
 function distance(x1,y1,z1,x2,y2,z2) {
   return Math.sqrt(square(x2-x1)+square(y2-y1)+square(z2-z1));
+}
+
+function todegrees(r){
+  return r * 57.2958;
 }
 
 function square(x) {
