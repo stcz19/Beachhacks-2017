@@ -40,6 +40,7 @@ var handHistory=[ ];
 var finger_distance;
 var frames=[];
 var armAngles;
+var wristAngle;
 //Leap motion controller
 var controller = new Leap.Controller();
 //Leap motion control loop
@@ -170,7 +171,7 @@ function square(x) {
 function getbasepostition(x,z)
 {
   var angle = Math.tan(x/z);
-  return 90 - toDegrees(angle);
+  return 90 - todegrees(angle);
 }
 
 //uses leapmotion hand (palm) values to
